@@ -5,30 +5,30 @@ function App() {
   const [count,setCount] = useState(0);
   return (
     <>
-    <counterContext.Provider value={count}>
-             <Count  setCount={setCount}/>
+    <counterContext.Provider value={{count,setCount}}>
+             <Count/>
              {/* <Button count={count} setCount={setCount}/> */}
     </counterContext.Provider>
     </>
   )
 }
 
-function Count({ setCount}){
+function Count(){
   return <div>
     <CountRenderer/>
-    <Button  setCount={setCount}/>
+    <Button/>
   </div>
 }
 
 function CountRenderer(){
-  const count = useContext(counterContext);
+  const {count} = useContext(counterContext);
   return <div>
     {count}
   </div>
 }
 
-function Button({ setCount}){
-  const count = useContext(counterContext);
+function Button(){
+  const {count, setCount} = useContext(counterContext);
   return <div>
     <button onClick={()=>{
       setCount(count+1);
