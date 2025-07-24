@@ -238,17 +238,21 @@ A comprehensive React application demonstrating the evolution from props drillin
 
 ### 🏗️ Component Architecture
 ```
-App (Provider)
+App (Provider with {count, setCount})
 └── Count
-    ├── CountRenderer (Consumer)
-    └── Button (Consumer)
+    ├── CountRenderer (Consumes {count})
+    └── Button (Consumes {count, setCount})
 ```
 
+**Key Improvement**: The updated implementation passes both `count` and `setCount` through context as an object, eliminating ALL props drilling. No props are passed between components anymore!
+
 ### 💡 Key Concepts Demonstrated
-- **Context Creation** - `createContext()` from React
-- **Context Provider** - Wrapping components with state
-- **useContext Hook** - Consuming context in components
-- **Props Drilling Problem** - Why context is needed
+- **Context Creation with Defaults** - `createContext()` with default object structure
+- **Object Context Values** - Passing both state and setter in context
+- **Context Provider** - Wrapping components with state object
+- **useContext Hook** - Consuming context with destructuring
+- **Destructuring Assignment** - Clean extraction of values from context
+- **Eliminating Props Drilling** - No props needed between components
 - **State Management** - Global state without external libraries
 
 ### 🎯 Functionality
@@ -266,32 +270,43 @@ npm run dev
 
 ### 🔍 Code Highlights
 ```jsx
-// Context creation
-export const counterContext = createContext(0);
+// Context creation with default values
+export const counterContext = createContext({
+  count: 0,
+  setCount: () => {},
+});
 
-// Provider setup
+// Provider setup with object value
 function App() {
   const [count, setCount] = useState(0);
   return (
-    <counterContext.Provider value={count}>
-      <Count setCount={setCount}/>
+    <counterContext.Provider value={{count, setCount}}>
+      <Count/>
     </counterContext.Provider>
   )
 }
 
-// Context consumption
+// Context consumption with destructuring
 function CountRenderer(){
-  const count = useContext(counterContext);
+  const {count} = useContext(counterContext);
   return <div>{count}</div>
 }
 
-// Button with context
-function Button({ setCount}){
-  const count = useContext(counterContext);
+// Button with context - no props needed
+function Button(){
+  const {count, setCount} = useContext(counterContext);
   return (
-    <button onClick={() => setCount(count + 1)}>
-      Increase the count
-    </button>
+    <div>
+      <button onClick={() => setCount(count + 1)}>
+        Increase the count
+      </button>
+      <button onClick={() => setCount(count - 1)}>
+        Decrease the count
+      </button>
+      <button onClick={() => setCount(0)}>
+        Reset
+      </button>
+    </div>
   )
 }
 ```
